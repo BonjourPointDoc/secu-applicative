@@ -1,0 +1,18 @@
+# functions
+- Get all juice sold by our shop
+- Get all available juice
+- Get juice recipe
+---
+- Get all available ingredients
+- Get all available ingredients for one specific recipe
+---
+- Search juice by specific ingredient
+- Search juice excluding specific ingredient
+- Search by name
+---
+- Create an account
+- Update account information
+---
+- Add/ remove juice to backpack
+- Validate and pay backpack
+- Create a delivery order
