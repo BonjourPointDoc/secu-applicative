@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
+from fastapi.params import Header
 
 from lib.models import Status, StatusOutput ,LoginInput, LoginOutput
 from lib.passwords import *
+from lib.token import create_api_key, verify_api_key
 
 # Initialise API
 app = FastAPI(title="Juice shop", version="beta")
@@ -24,6 +26,15 @@ async def login(json_input: LoginInput):
                                                  msg= "Wrong credentials").model_dump())
     output = LoginOutput( # Using LoginOutput model to assert server is sending normal output
         status= Status.WIP,
-        api_key= f"bidon key for {json_input.login} + {json_input.password}")
+        api_key= create_api_key(json_input.login))
 
     return output
+
+@app.get("/token-test", tags=["login"])
+async def test_token(x_api_key: str = Header(...)):
+    if not verify_api_key(x_api_key):
+        return JSONResponse(status_code=401,
+                            content=StatusOutput(status= Status.ERROR,
+                                                 msg="Wrong API Key !").model_dump())
+
+    return StatusOutput(status=Status.SUCCESS, msg="The API has good format !")
