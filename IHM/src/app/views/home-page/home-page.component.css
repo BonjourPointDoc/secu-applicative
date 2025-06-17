@@ -1,0 +1,68 @@
+:host {
+  --content-padding: 5px;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100px;
+  padding: var(--content-padding); 
+  background-image: linear-gradient(to right, var(--accent-color), var(--primary-color) );
+  box-shadow: 0px 5px 25px var(--shadow-color);
+}
+
+.headerDiv{  
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.brand-logo{
+    height: 100%;
+}
+
+.content {
+  padding: var(--content-padding);
+}
+
+.results {
+  display: grid;
+  column-gap: 14px;
+  row-gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 400px));
+  margin-top: 50px;
+  justify-content: space-around;
+}
+
+input[type="text"] {
+  border: solid 1px var(--primary-color);
+  padding: 10px;
+  border-radius: 8px;
+  margin-right: 4px;
+  display: inline-block;
+  width: 30%;
+}
+
+button {
+  padding: 10px;
+  border: solid 1px var(--primary-color);
+  background: var(--primary-color);
+  color: white;
+  border-radius: 8px;
+}
+
+@media (min-width: 500px) and (max-width: 768px) {
+  .results {
+      grid-template-columns: repeat(2, 1fr);
+  }
+  input[type="text"] {
+      width: 70%;
+  }   
+}
+
+@media (max-width: 499px) {
+  .results {
+      grid-template-columns: 1fr;
+  }    
+}

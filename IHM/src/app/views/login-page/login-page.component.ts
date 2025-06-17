@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
   selector: 'app-login-page',
   imports: [CommonModule, LoginComponent, RegisterComponent],
   template: `
+    <div class="container">
      <div id="loginPageForm">
       <div id="loginButtonsContainer">
         <button (click)="switchForms()" [disabled]="loginForm">Login</button>
@@ -17,6 +18,7 @@ import { Router } from '@angular/router';
       <ng-template #elseBlock>
         <app-register (validUser)="onValidation()"/>
       </ng-template>
+      </div>
     </div>
   `,
   styleUrl: './login-page.component.css'
