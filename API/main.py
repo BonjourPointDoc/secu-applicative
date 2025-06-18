@@ -36,7 +36,7 @@ async def login(json_input: LoginInput):
     return output
 
 # Remove in prod because attacker can brute force token
-@app.get("/token-test", tags=["login"], response_model=StatusOutput,
+@app.post("/token/access/test", tags=["login"], response_model=StatusOutput,
          responses={200: {"model": StatusOutput},
                     401: {"model": StatusOutput}})
 async def test_token(x_api_key: str = Header(...)):
@@ -61,10 +61,10 @@ async def create_client_route(client_info: ClientCreationInput):
     return StatusOutput(status= Status.SUCCESS,
                         msg= "User successfully created")
 
-@app.post("/token/refresh", tags=["login"], response_model=AccessTokenOutput,
+@app.post("/token/access", tags=["login"], response_model=AccessTokenOutput,
           responses= {200: {"model": AccessTokenOutput},
                       401: {"model": StatusOutput}})
-async def refresh_token_route(x_api_key: str = Header(...)):
+async def get_access_token_route(x_api_key: str = Header(...)):
     if not verify_token(x_api_key, True): # We want a refresh token here
         return JSONResponse(status_code=401 ,content=StatusOutput(status= Status.ERROR,
                             msg= "Token rejected").model_dump())
