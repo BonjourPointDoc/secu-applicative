@@ -41,3 +41,8 @@ class ClientCreationInput(BaseModel):
     telephone: str
     # Info in client_password excluding mot_de_passe and date_modification
     mot_de_passe: str
+
+# Model used to output the
+class AccessTokenOutput(BaseModel):
+    status: Status
+    access_token: str

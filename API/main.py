@@ -4,9 +4,10 @@ from fastapi.params import Header
 
 from lib.models import (Status, StatusOutput ,
                         LoginInput, LoginOutput,
-                        ClientCreationInput)
+                        ClientCreationInput,
+                        AccessTokenOutput)
 from lib.passwords import *
-from lib.token import create_api_key, verify_api_key
+from lib.token import create_refresh_token, create_access_token, verify_token, extract_login_from_token
 from lib.client import create_client
 
 # Initialise API
@@ -26,14 +27,14 @@ async def login(json_input: LoginInput):
                             content=StatusOutput(status= Status.ERROR,
                                                  msg= "Wrong credentials").model_dump())
     output = LoginOutput( # Using LoginOutput model to assert server is sending normal output
-        status= Status.WIP,
-        api_key= create_api_key(json_input.login))
+        status= Status.SUCCESS,
+        api_key= create_refresh_token(json_input.login))
 
     return output
 
 @app.get("/token-test", tags=["login"]) # Remove in prod because attacker can brute force token
 async def test_token(x_api_key: str = Header(...)):
-    if not verify_api_key(x_api_key):
+    if not verify_token(x_api_key, False): # False is for access token
         return JSONResponse(status_code=401,
                             content=StatusOutput(status= Status.ERROR,
                                                  msg="Wrong API Key !").model_dump())
@@ -51,3 +52,14 @@ async def create_client_route(client_info: ClientCreationInput):
 
     return StatusOutput(status= Status.SUCCESS,
                         msg= "User successfully created")
+
+@app.post("/token/refresh", tags=["login"], response_model=AccessTokenOutput)
+async def refresh_token_route(x_api_key: str = Header(...)):
+    if not verify_token(x_api_key, True): # We want a refresh token here
+        return StatusOutput(status= Status.ERROR,
+                            msg= "Token rejected").model_dump()
+
+    access_token: str = create_access_token(extract_login_from_token(x_api_key))
+
+    return AccessTokenOutput(status= Status.SUCCESS,
+                             access_token= access_token).model_dump()
