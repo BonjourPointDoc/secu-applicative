@@ -2,9 +2,12 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from fastapi.params import Header
 
-from lib.models import Status, StatusOutput ,LoginInput, LoginOutput
+from lib.models import (Status, StatusOutput ,
+                        LoginInput, LoginOutput,
+                        ClientCreationInput)
 from lib.passwords import *
 from lib.token import create_api_key, verify_api_key
+from lib.client import create_client
 
 # Initialise API
 app = FastAPI(title="Juice shop", version="beta")
@@ -30,7 +33,7 @@ async def login(json_input: LoginInput):
 
     return output
 
-@app.get("/token-test", tags=["login"])
+@app.get("/token-test", tags=["login"]) # Remove in prod because attacker can brute force token
 async def test_token(x_api_key: str = Header(...)):
     if not verify_api_key(x_api_key):
         return JSONResponse(status_code=401,
@@ -38,3 +41,15 @@ async def test_token(x_api_key: str = Header(...)):
                                                  msg="Wrong API Key !").model_dump())
 
     return StatusOutput(status=Status.SUCCESS, msg="The API has good format !")
+
+@app.post("/login/user", tags=["login"], response_model=StatusOutput)
+async def create_client_route(client_info: ClientCreationInput):
+    success = create_client(client_info)
+
+    if not success:
+        return JSONResponse(status_code=400,
+                            content=StatusOutput(status= Status.ERROR,
+                                                 msg="Can't create user !").model_dump())
+
+    return StatusOutput(status= Status.SUCCESS,
+                        msg= "User successfully created")

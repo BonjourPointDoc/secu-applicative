@@ -1,4 +1,4 @@
-from .common import logger
+from .common import logger, get_connection
 from bcrypt import gensalt, hashpw, checkpw
 from datetime import datetime
 from time import sleep
@@ -28,3 +28,13 @@ def verify_credentials(login: str, password: str) -> bool:
         return True
     else:
         return False
+
+def get_user_hash(client_id: int) -> str:
+    connection, cursor = get_connection()
+
+    cursor.execute("""SELECT mot_de_passe 
+    FROM Client_Password 
+    WHERE client_id = ?""", (client_id,))
+
+    return ""
+

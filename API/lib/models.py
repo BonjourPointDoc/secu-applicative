@@ -18,15 +18,26 @@ class StatusOutput(BaseModel):
     class Config: # Code to raise exceptions when extra fields are added
         extra = "forbid" # New FastAPI way to declare that extra are forbidden
 
-# Model used for logging input
+# Model used for login input
 class LoginInput(BaseModel):
     login: str
     password: str
     class Config: # Code to raise exceptions when extra fields are added
         extra = "forbid" # New FastAPI way to declare that extra are forbidden
 
+# Model used for login output
 class LoginOutput(BaseModel):
     status: Status
     api_key: str
     class Config: # Code to raise exceptions when extra fields are added
         extra = "forbid" # New FastAPI way to declare that extra are forbidden
+
+# Model used for creating client account
+class ClientCreationInput(BaseModel):
+    # Info in table client excluding client_id
+    nom: str
+    prenom: str
+    email: str
+    telephone: str
+    # Info in client_password excluding mot_de_passe and date_modification
+    mot_de_passe: str
