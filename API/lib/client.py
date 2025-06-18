@@ -3,6 +3,7 @@ from .models import ClientCreationInput
 from  re import fullmatch
 from mariadb import Error as MariaDbError
 from .passwords import hash_password
+from .token import extract_login_from_token
 
 """
 Function to create client
@@ -46,3 +47,31 @@ def create_client(client_info: ClientCreationInput) -> bool:
     except MariaDbError as e:
         logger.error(f"Failed to add client to db : {e}")
         return False
+
+"""
+This function assumes that token has been verified before
+"""
+def get_client_id_by_token(token: str) -> int:
+    try:
+        connection, cursor = get_connection()
+        email = extract_login_from_token(token)
+
+        cursor.execute("""SELECT client_id 
+        FROM Client WHERE email = ?""", (email,))
+
+        query = cursor.fetchone()
+
+        if len(query) != 1:
+            logger.error("Not the good number of parameters for the client_id")
+            return -1
+
+        if not isinstance(query[0], int):
+            logger.error("The client-id fetch from database has wrong type")
+            return -1
+
+        # The good case
+        return query[0]
+
+    except MariaDbError as e:
+        print(f"Error in db when searching for client_id : {e}")
+        return -1
