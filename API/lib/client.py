@@ -1,8 +1,7 @@
-# from .common import logger
 from .common import get_connection, logger
 from .models import ClientCreationInput
 from  re import fullmatch
-from mariadb import connect, Error as MariaDbError
+from mariadb import Error as MariaDbError
 from .passwords import hash_password
 
 """

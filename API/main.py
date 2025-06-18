@@ -21,9 +21,7 @@ async def root():
 @app.post("/login", tags=["login"], response_model=LoginOutput,
           responses={401: {"model": LoginOutput, "description": "Wrong credentials"}})
 async def login(json_input: LoginInput):
-    # WIP in progress to test framework
-
-    if not verify_credentials(json_input.login, json_input.password):  # Used ti simulate wrong credentials
+    if not verify_credentials(json_input.login, json_input.password):
         return JSONResponse(status_code=401,
                             content=StatusOutput(status= Status.ERROR,
                                                  msg= "Wrong credentials").model_dump())
@@ -40,7 +38,7 @@ async def test_token(x_api_key: str = Header(...)):
                             content=StatusOutput(status= Status.ERROR,
                                                  msg="Wrong API Key !").model_dump())
 
-    return StatusOutput(status=Status.SUCCESS, msg="The API has good format !")
+    return StatusOutput(status=Status.SUCCESS, msg="The API key has good format !")
 
 @app.post("/login/user", tags=["login"], response_model=StatusOutput)
 async def create_client_route(client_info: ClientCreationInput):
