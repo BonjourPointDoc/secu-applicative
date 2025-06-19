@@ -1,6 +1,6 @@
 from .common import get_connection, logger
 from mariadb import Error as MariaDbError
-from .models import JuiceItem, JuiceList
+from .models import JuiceItem, JuiceList, IngredientDesc
 
 def get_all_juice() -> JuiceList:
     try:
@@ -20,9 +20,12 @@ def get_all_juice() -> JuiceList:
                 continue # Just pass this juice as we still can try for the others
 
             try:
+                ingredients_desc: list[IngredientDesc] = get_juice_composition_info(juice[0])
+
                 juice_item: JuiceItem = JuiceItem(jus_id= juice[0],
                                                   nom= juice[1],
-                                                  prix_unitaire= juice[2])
+                                                  prix_unitaire= juice[2],
+                                                  ingredients= ingredients_desc)
 
                 juice_list.append(juice_item) # Add this juice to the final list
 
@@ -65,3 +68,35 @@ def get_juice_price(jus_id: int) -> float:
 
 
     return -1 # To inform that there's an error
+
+def get_juice_composition_info(juice_id: int) -> list[IngredientDesc]:
+    try:
+        connection, cursor = get_connection()
+
+        cursor.execute("""SELECT Jus_Ingredient.ingredient_id, Jus_Ingredient.quantite, Ingredient.nom
+        FROM Jus_Ingredient INNER JOIN Ingredient ON Jus_Ingredient.ingredient_id = Ingredient.ingredient_id
+        WHERE Jus_Ingredient.jus_id = ?""", (juice_id,))
+
+        query = cursor.fetchall()
+
+        if len(query) < 1:
+            logger.error("Juice has no ingredients !")
+            return []
+
+        ingredient_list: list[IngredientDesc] = []
+        for ingredient in query:
+            if len(ingredient) != 3:
+                logger.error("Not the correct number of ingredient info from database")
+                continue
+
+            obj: IngredientDesc = IngredientDesc(ingredient_id= ingredient[0],
+                                                 quantite= float(ingredient[1]),
+                                                 nom= ingredient[2])
+
+            ingredient_list.append(obj)
+
+        return ingredient_list
+
+
+    except MariaDbError as e:
+        logger.error(f"Can't retrieve ingredient informations: {e}")

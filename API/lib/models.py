@@ -56,11 +56,18 @@ class TransactionOutput(BaseModel):
     status: Status
     transaction_id: int
 
+# Model used to represent and ingredient
+class IngredientDesc(BaseModel):
+    ingredient_id: int
+    quantite: int
+    nom: str
+
 # Model used to represent a recording juice
 class JuiceItem(BaseModel):
     jus_id: int
     nom: str
     prix_unitaire: float
+    ingredients: list[IngredientDesc]
 
 # Model used to represent the list of juices
 class JuiceList(BaseModel):

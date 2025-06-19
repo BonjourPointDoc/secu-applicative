@@ -115,15 +115,6 @@ async def add_juice_to_transaction_route(juice_info: JuiceTransactionItem, x_api
 
     return StatusOutput(status= Status.SUCCESS, msg= "Successfully added juice to transaction").model_dump()
 
-@app.get("/transaction/juice", tags=["transaction"], response_model=TransactionItems)
-async def get_transaction_route(transaction_id: int, x_api_key: str = Header(...)):
-    if not verify_token(x_api_key, False):  # Access token
-        return JSONResponse(status_code=401, content=StatusOutput(status=Status.ERROR,
-                                                                  msg="Token rejected").model_dump())
-
-    items = get_transaction_items(x_api_key, transaction_id)
-
-    return items.model_dump()
 
 @app.patch("/transaction", tags=["transaction"], response_model=StatusOutput)
 async def update_juice_from_transaction_route(juice_info: JuiceTransactionItem, x_api_key: str = Header(...)):
@@ -153,3 +144,14 @@ async def get_transaction_info_route(transaction_id: int, x_api_key: str = Heade
                                                                    msg= "Can't retrieve transaction info"))
 
     return res.model_dump()
+
+@app.get("/transaction/juice", tags=["transaction"], response_model=TransactionItems)
+async def get_transaction_route(transaction_id: int, x_api_key: str = Header(...)):
+    if not verify_token(x_api_key, False):  # Access token
+        return JSONResponse(status_code=401, content=StatusOutput(status=Status.ERROR,
+                                                                  msg="Token rejected").model_dump())
+
+    items: TransactionItems = get_transaction_items(x_api_key, transaction_id)
+
+    return items.model_dump()
+
