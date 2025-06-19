@@ -109,3 +109,50 @@ def get_transaction_items(token: str, transaction_id: int) -> TransactionItems:
         logger.error(f"Failed to add juice to the transaction: {e}")
         return TransactionItems(juices= [])
 
+
+
+def update_juice_to_transaction(juice_info: JuiceTransactionItem, token: str) -> bool:
+    try:
+        connection, cursor= get_connection()
+        user_id = get_client_id_by_token(token)
+
+        cursor.execute("""SELECT COUNT(transaction_id) FROM Transaction
+        WHERE client_id = ? AND transaction_id = ?""", (user_id, juice_info.transaction_id))
+
+
+        try:
+            if cursor.fetchone()[0] != 1:
+                logger.error("User don't own this transaction")
+                return False
+        except IndexError:
+            logger.error("User don't own this transaction")
+            return False
+
+        # Get the actual values
+        cursor.execute("""SELECT transaction_id, jus_id, quantite FROM Transaction_Jus
+        WHERE transaction_id = ? AND jus_id = ?""", (juice_info.transaction_id, juice_info.jus_id))
+
+        query = cursor.fetchone()
+
+        if not query:
+            logger.warning("This is a new item to add to transaction. Please use post method !")
+            return False
+
+        if len(query) != 3:
+            logger.error("Wrong number of values fetched from database !")
+
+
+        if juice_info.quantite != query[2]: # Assert if the value has changed
+            cursor.execute("""UPDATE Transaction_Jus
+            SET quantite = ?
+            WHERE transaction_id = ? AND jus_id = ?""", (juice_info.quantite, juice_info.transaction_id, juice_info.jus_id))
+
+            connection.commit()
+            return True
+
+        else:
+            return True # Even if nothing has changed there's no errors
+
+    except MariaDbError as e:
+        logger.error(f"Failed to add juice to the transaction: {e}")
+        return False

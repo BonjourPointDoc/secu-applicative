@@ -6,7 +6,7 @@ from lib.common import logger
 from lib.passwords import verify_credentials
 from lib.token import create_refresh_token, create_access_token, verify_token, extract_login_from_token
 from lib.client import create_client
-from lib.transaction import create_transaction, add_juice_to_transaction, get_transaction_items
+from lib.transaction import create_transaction, add_juice_to_transaction, get_transaction_items, update_juice_to_transaction
 from lib.juice import get_all_juice
 from lib.models import (Status, StatusOutput ,
                         LoginInput, LoginOutput,
@@ -121,3 +121,17 @@ async def get_transaction_route(transaction_id: int, x_api_key: str = Header(...
     items = get_transaction_items(x_api_key, transaction_id)
 
     return items.model_dump()
+
+@app.patch("/transaction", tags=["transaction"], response_model=StatusOutput)
+async def update_juice_from_transaction_route(juice_info: JuiceTransactionItem, x_api_key: str = Header(...)):
+    if not verify_token(x_api_key, False):  # Access token
+        return JSONResponse(status_code=401, content=StatusOutput(status=Status.ERROR,
+                                                                  msg="Token rejected").model_dump())
+
+    if not update_juice_to_transaction(juice_info, x_api_key):
+        return JSONResponse(status_code=400, content=StatusOutput(status= Status.ERROR,
+                                                                  msg="Can't update transaction").model_dump())
+
+    return StatusOutput(status= Status.SUCCESS,
+                        msg= "Successfully updated juice on the transaction").model_dump()
+
