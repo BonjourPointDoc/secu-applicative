@@ -6,13 +6,13 @@ from lib.common import logger
 from lib.passwords import verify_credentials
 from lib.token import create_refresh_token, create_access_token, verify_token, extract_login_from_token
 from lib.client import create_client
-from lib.transaction import create_transaction, add_juice_to_transaction
+from lib.transaction import create_transaction, add_juice_to_transaction, get_transaction_items
 from lib.juice import get_all_juice
 from lib.models import (Status, StatusOutput ,
                         LoginInput, LoginOutput,
                         ClientCreationInput,
                         AccessTokenOutput,
-                        TransactionInput, TransactionOutput, JuiceTransactionItem,
+                        TransactionInput, TransactionOutput, JuiceTransactionItem, TransactionItems,
                         JuiceList)
 
 
@@ -101,7 +101,7 @@ async def add_juice_route(x_api_key: str = Header(...)):
 
     return all_juice.model_dump()
 
-@app.post("/transaction/add-juice")
+@app.post("/transaction/add-juice", tags=["transaction"])
 async def add_juice_to_transaction_route(juice_info: JuiceTransactionItem, x_api_key: str = Header(...)):
     if not verify_token(x_api_key, False): # Access token
         return JSONResponse(status_code=401 ,content=StatusOutput(status= Status.ERROR,
@@ -111,3 +111,13 @@ async def add_juice_to_transaction_route(juice_info: JuiceTransactionItem, x_api
         return JSONResponse(status_code=400, content=StatusOutput(status= Status.ERROR,
                                                                   msg="Failed to add juice to transaction").model_dump())
     return StatusOutput(status= Status.SUCCESS, msg= "Successfully added juice to transaction").model_dump()
+
+@app.get("/transaction", tags=["transaction"], response_model=TransactionItems)
+async def get_transaction_route(transaction_id: int, x_api_key: str = Header(...)):
+    if not verify_token(x_api_key, False):  # Access token
+        return JSONResponse(status_code=401, content=StatusOutput(status=Status.ERROR,
+                                                                  msg="Token rejected").model_dump())
+
+    items = get_transaction_items(x_api_key, transaction_id)
+
+    return items.model_dump()

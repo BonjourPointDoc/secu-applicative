@@ -72,3 +72,7 @@ class JuiceTransactionItem(BaseModel):
     jus_id: int
     quantite: int
 
+# Model used to retrieve the transaction items from database
+class TransactionItems(BaseModel):
+    juices: list[JuiceTransactionItem]
+

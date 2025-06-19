@@ -1,7 +1,9 @@
+from operator import index
+
 from .common import get_connection, logger
 from mariadb import Error as MariaDbError
 from .client import get_client_id_by_token
-from .models import TransactionInput, JuiceTransactionItem
+from .models import TransactionInput, JuiceTransactionItem, TransactionItems
 
 """
 For creating the transaction whe only the client we just need the client id 
@@ -57,4 +59,53 @@ def add_juice_to_transaction(juice_info: JuiceTransactionItem, token: str) -> bo
     except MariaDbError as e:
         logger.error(f"Failed to add juice to the transaction: {e}")
         return False
+
+def get_transaction_items(token: str, transaction_id: int) -> TransactionItems:
+    try:
+        connection, cursor= get_connection()
+        user_id = get_client_id_by_token(token)
+
+        cursor.execute("""SELECT COUNT(transaction_id) FROM Transaction
+        WHERE client_id = ? AND transaction_id = ?""", (user_id, transaction_id))
+
+
+        try:
+            if cursor.fetchone()[0] != 1:
+                logger.error("User don't own this transaction")
+                return TransactionItems(juices= [])
+        except IndexError:
+            logger.error("User don't own this transaction")
+            return TransactionItems(juices= [])
+
+
+        juices_item: list = []
+
+        cursor.execute("""SELECT transaction_id, jus_id, quantite FROM Transaction_Jus
+        WHERE transaction_id = ?""", (transaction_id,))
+
+        query = cursor.fetchall()
+
+        if len(query) < 1:
+            # No need to log an error because it means that no item have been added.
+            return TransactionItems(juices= [])
+
+        for item in query:
+            if len(item) != 3:
+                logger.error("An transaction_jus item has an invalid number of values ")
+                continue # Just pass to the next item
+
+            try:
+                obj: JuiceTransactionItem = JuiceTransactionItem(transaction_id= item[0],
+                                                                 jus_id= item[1],
+                                                                 quantite= item[2])
+                juices_item.append(obj)
+
+            except IndexError:
+                logger.error("This error should never happened /!\\ This means that's further verification are not working correctly !")
+                continue
+
+        return TransactionItems(juices= juices_item)
+    except MariaDbError as e:
+        logger.error(f"Failed to add juice to the transaction: {e}")
+        return TransactionItems(juices= [])
 
