@@ -31,9 +31,22 @@ def create_transaction(token: str, info: TransactionInput) -> int: # Passed to i
 
     return res
 
-def add_juice_to_transaction(juice_info: JuiceTransactionItem) -> bool:
+def add_juice_to_transaction(juice_info: JuiceTransactionItem, token: str) -> bool:
     try:
         connection, cursor= get_connection()
+        user_id = get_client_id_by_token(token)
+
+        cursor.execute("""SELECT COUNT(transaction_id) FROM Transaction
+        WHERE client_id = ? AND transaction_id = ?""", (user_id, juice_info.transaction_id))
+
+
+        try:
+            if cursor.fetchone()[0] != 1:
+                logger.error("User don't own this transaction")
+                return False
+        except IndexError:
+            logger.error("User don't own this transaction")
+            return False
 
         cursor.execute("""INSERT INTO Transaction_Jus
         (transaction_id, jus_id, quantite)
