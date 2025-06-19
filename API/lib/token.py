@@ -26,7 +26,7 @@ def verify_token(token: str, is_refresh: bool) -> bool:
             logger.error("Failed to decode token !")
             return False
 
-        print(json_content) # Remove in prod
+        # print(json_content) # Remove in prod
         if not "refresh" in json_content.keys() or not "login" in json_content.keys():
             logger.error("Missing token information aborting")
             return False
