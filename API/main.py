@@ -3,14 +3,14 @@ from fastapi.responses import JSONResponse
 from fastapi.params import Header
 
 from lib.common import logger
-from lib.passwords import verify_credentials
+from lib.passwords import verify_credentials, update_password
 from lib.token import create_refresh_token, create_access_token, verify_token, extract_login_from_token
 from lib.client import create_client
 from lib.transaction import create_transaction, add_juice_to_transaction, get_transaction_items, update_juice_to_transaction, update_total, get_transaction_info
 from lib.juice import get_all_juice
 from lib.models import (Status, StatusOutput ,
                         LoginInput, LoginOutput,
-                        ClientCreationInput,
+                        ClientCreationInput, PasswordChange,
                         AccessTokenOutput,
                         TransactionInput, TransactionOutput, JuiceTransactionItem, TransactionItems, TransactionInfo,
                         JuiceList)
@@ -38,6 +38,14 @@ async def login(json_input: LoginInput):
 
     return output
 
+@app.patch("/login", tags=["login"])
+async def change_password_route(password_infos: PasswordChange):
+    if not update_password(password_infos):
+        return JSONResponse(status_code=400, content= StatusOutput(status= Status.ERROR,
+                                                                   msg= "Can't update password").model_dump())
+    return StatusOutput(status= Status.SUCCESS, msg= "Password updated successfully")
+
+"""
 # Remove in prod because attacker can brute force token
 @app.post("/token/access/test", tags=["login"], response_model=StatusOutput,
          responses={200: {"model": StatusOutput},
@@ -49,6 +57,7 @@ async def test_token(x_api_key: str = Header(...)):
                                                  msg="Wrong API Key !").model_dump())
 
     return StatusOutput(status=Status.SUCCESS, msg="The API key has good format !")
+"""
 
 @app.post("/login/user", tags=["login"], response_model=StatusOutput,
           responses={200: {"model": StatusOutput},

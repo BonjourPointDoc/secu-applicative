@@ -89,3 +89,9 @@ class TransactionInfo(BaseModel):
     total: float
     adresse_livraison: str
 
+# Model used to change password
+class PasswordChange(BaseModel):
+    email: str
+    old_password: str
+    new_password: str
+
