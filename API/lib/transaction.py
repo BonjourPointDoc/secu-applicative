@@ -1,7 +1,7 @@
 from .common import get_connection, logger
 from mariadb import Error as MariaDbError
 from .client import get_client_id_by_token
-from .models import TransactionInput
+from .models import TransactionInput, JuiceTransactionItem
 
 """
 For creating the transaction whe only the client we just need the client id 
@@ -30,3 +30,18 @@ def create_transaction(token: str, info: TransactionInput) -> int: # Passed to i
 
 
     return res
+
+def add_juice_to_transaction(juice_info: JuiceTransactionItem) -> bool:
+    try:
+        connection, cursor= get_connection()
+
+        cursor.execute("""INSERT INTO Transaction_Jus
+        (transaction_id, jus_id, quantite)
+        VALUES (?, ?, ?)""", (juice_info.transaction_id, juice_info.jus_id, juice_info.quantite))
+
+        connection.commit()
+        return True
+    except MariaDbError as e:
+        logger.error(f"Failed to add juice to the transaction: {e}")
+        return False
+

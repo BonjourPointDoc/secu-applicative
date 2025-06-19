@@ -3,4 +3,4 @@ INSERT INTO Jus
 VALUES
 ("Jus d'orange", 1.00),
 ("Jus de pomme", 1.25),
-("Jus d'ananas", 1.70)
+("Jus d'ananas", 1.70);

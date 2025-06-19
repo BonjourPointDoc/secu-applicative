@@ -62,7 +62,13 @@ class JuiceItem(BaseModel):
     nom: str
     prix_unitaire: float
 
-# Class used to represent the list of juices
+# Model used to represent the list of juices
 class JuiceList(BaseModel):
     juices: list[JuiceItem]
+
+# Model used to add Juice to a transaction.
+class JuiceTransactionItem(BaseModel):
+    transaction_id: int
+    jus_id: int
+    quantite: int
 
