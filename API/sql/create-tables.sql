@@ -18,6 +18,7 @@ CREATE TABLE Transaction (
     client_id INT NOT NULL,
     date_transaction DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     total DECIMAL(10, 2) NOT NULL,
+    adresse_livraison VARCHAR(255) NOT NULL;
     CONSTRAINT fk_transaction_client FOREIGN KEY (client_id) REFERENCES Client(client_id) ON DELETE CASCADE
 );
 
