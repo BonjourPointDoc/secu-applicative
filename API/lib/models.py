@@ -46,3 +46,9 @@ class ClientCreationInput(BaseModel):
 class AccessTokenOutput(BaseModel):
     status: Status
     access_token: str
+
+# Model used to return the newest transaction_id created
+class TransactionOutput(BaseModel):
+    status: Status
+    transaction_id: int
+

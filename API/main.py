@@ -10,7 +10,8 @@ from lib.transaction import create_transaction
 from lib.models import (Status, StatusOutput ,
                         LoginInput, LoginOutput,
                         ClientCreationInput,
-                        AccessTokenOutput)
+                        AccessTokenOutput,
+                        TransactionOutput)
 
 
 # Initialise API
@@ -79,8 +80,11 @@ async def add_transaction_route(x_api_key: str = Header(...)):
     if not verify_token(x_api_key, False): # Access token
         return JSONResponse(status_code=401 ,content=StatusOutput(status= Status.ERROR,
                             msg= "Token rejected").model_dump())
-    if not create_transaction(x_api_key):
+
+    transaction_id = create_transaction(x_api_key)
+    if transaction_id == -1 : # -1 means that an error occurred
         return JSONResponse(status_code=400, content=StatusOutput(status= Status.ERROR,
                                                                   msg= "Failed to create transaction"))
 
-    return StatusOutput(status= Status.WIP, msg="WIP")
+    return TransactionOutput(status= Status.SUCCESS,
+                             transaction_id= transaction_id).model_dump()
