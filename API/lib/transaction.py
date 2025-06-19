@@ -3,7 +3,8 @@ from operator import index
 from .common import get_connection, logger
 from mariadb import Error as MariaDbError
 from .client import get_client_id_by_token
-from .models import TransactionInput, JuiceTransactionItem, TransactionItems
+from .models import TransactionInput, JuiceTransactionItem, TransactionItems, TransactionInfo
+from .juice import get_juice_price
 
 """
 For creating the transaction whe only the client we just need the client id 
@@ -156,3 +157,79 @@ def update_juice_to_transaction(juice_info: JuiceTransactionItem, token: str) ->
     except MariaDbError as e:
         logger.error(f"Failed to add juice to the transaction: {e}")
         return False
+
+
+def update_total(transaction_id: int, token: str) -> bool:
+    items: TransactionItems = get_transaction_items(token, transaction_id)
+
+    if len(items.juices) < 1:
+        logger.warning("Can't update a transaction with no items !")
+        return False
+
+    total: int = 0
+
+    for item in items.juices:
+
+        price: int = get_juice_price(item.jus_id)
+        if price <= 0:
+            continue
+
+        total += price * item.quantite
+
+    # Update database total info assuming that if db fail we calculated the price for nothing
+
+    try:
+        connection, cursor = get_connection()
+        user_id = get_client_id_by_token(token)
+
+        cursor.execute("""UPDATE Transaction
+        SET total = ?
+        WHERE transaction_id = ? AND client_id = ?""",
+                       (total, transaction_id, user_id))
+
+        connection.commit()
+        return True
+
+    except MariaDbError as e:
+        logger.error(f"Can't update total : {e}")
+
+
+    return True
+
+def get_transaction_info(token: str, transaction_id: int) -> TransactionInfo:
+    user_id = get_client_id_by_token(token)
+
+    try:
+        connection, cursor = get_connection()
+
+        cursor.execute("""SELECT COUNT(transaction_id) FROM Transaction
+                WHERE client_id = ? AND transaction_id = ?""", (user_id, transaction_id))
+
+        try:
+            if cursor.fetchone()[0] != 1:
+                logger.error("User don't own this transaction")
+                return TransactionInfo(date_transaction= "", total= -1, adresse_livraison= "")
+        except IndexError:
+            logger.error("User don't own this transaction")
+            return TransactionInfo(date_transaction= "", total= -1, adresse_livraison= "")
+
+        cursor.execute("""SELECT date_transaction, total, adresse_livraison FROM Transaction
+        WHERE transaction_id = ?""", (transaction_id,))
+
+        query = cursor.fetchone()
+
+        if len(query) != 3:
+            logger.error("Database return wrong number of transaction information")
+            return TransactionInfo(date_transaction="", total=-1, adresse_livraison="")
+
+        try:
+            return TransactionInfo(date_transaction=str(query[0]),
+                                  total=query[1],
+                                  adresse_livraison=query[2])
+        except IndexError:
+            logger.error("This error should never happened /!\\ This means that's further verification are not working correctly !")
+            return TransactionInfo(date_transaction="", total=-1, adresse_livraison="")
+
+    except MariaDbError as e:
+        logger.error(f"Error when retrieving transaction info from database: {e}")
+        return TransactionInfo(date_transaction= "", total= -1, adresse_livraison= "")

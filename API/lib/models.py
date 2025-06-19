@@ -76,3 +76,9 @@ class JuiceTransactionItem(BaseModel):
 class TransactionItems(BaseModel):
     juices: list[JuiceTransactionItem]
 
+# Model used to retrieve information from
+class TransactionInfo(BaseModel):
+    date_transaction: str
+    total: float
+    adresse_livraison: str
+

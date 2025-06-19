@@ -34,3 +34,34 @@ def get_all_juice() -> JuiceList:
         return JuiceList(juices= juice_list)
     except MariaDbError as e:
         logger.error(f"Error when fetching juices from database: {e}")
+
+
+def get_juice_price(jus_id: int) -> float:
+    try:
+        connection, cursor = get_connection()
+
+        cursor.execute("""SELECT prix_unitaire FROM Jus
+        WHERE jus_id = ?""", (jus_id,))
+
+        query = cursor.fetchone()
+
+        if len(query) != 1:
+            logger.error("Database return wrong number of information")
+            return -1
+
+        if not isinstance(float(query[0]), float):
+            logger.error("Database return wrong type for the price !")
+            return -1
+
+        # Good case
+        return float(query[0])
+
+
+
+    except MariaDbError as e:
+        logger.error(f"Failed to gather juice price from database: {e}")
+    except KeyError:
+        logger.error("This error should never occur as long as checks above should avoid it !")
+
+
+    return -1 # To inform that there's an error
