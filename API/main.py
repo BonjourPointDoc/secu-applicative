@@ -12,7 +12,7 @@ from lib.models import (Status, StatusOutput ,
                         LoginInput, LoginOutput,
                         ClientCreationInput,
                         AccessTokenOutput,
-                        TransactionOutput,
+                        TransactionInput, TransactionOutput,
                         JuiceList)
 
 
@@ -78,12 +78,12 @@ async def get_access_token_route(x_api_key: str = Header(...)):
                              access_token= access_token).model_dump()
 
 @app.post("/transaction", tags=["transaction"])
-async def add_transaction_route(x_api_key: str = Header(...)):
+async def add_transaction_route(transaction_info: TransactionInput,x_api_key: str = Header(...)):
     if not verify_token(x_api_key, False): # Access token
         return JSONResponse(status_code=401 ,content=StatusOutput(status= Status.ERROR,
                             msg= "Token rejected").model_dump())
 
-    transaction_id = create_transaction(x_api_key)
+    transaction_id = create_transaction(x_api_key, transaction_info)
     if transaction_id == -1 : # -1 means that an error occurred
         return JSONResponse(status_code=400, content=StatusOutput(status= Status.ERROR,
                                                                   msg= "Failed to create transaction"))
