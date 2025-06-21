@@ -2,7 +2,7 @@ FROM ubuntu
 
 WORKDIR /opt/api
 
-RUN apt-get update; apt-get install -y python3 python3-venv pip
+RUN apt-get update; apt-get install -y python3 python3-venv pip libmariadb-dev build-essential
 RUN python3 -m venv venv
 RUN . venv/bin/activate
 
