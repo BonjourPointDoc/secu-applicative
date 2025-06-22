@@ -17,27 +17,29 @@
 }
 
 .juices-info {
-  padding: 10px 20px 20px 20px;
+  margin-left: 10%;
 }
 
-ul{
-  display: flex; 
-  flex-direction: column;
-  justify-content: baseline;
-  height: 50px;
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 15px;
 }
 
-.juices-info::before {
-  content: url("/assets/location-pin.svg") / "";
+.addToCart {
+  justify-self: right;
 }
 
-section.juices a {
-  padding-left: 20px;
-  text-decoration: none;
-  color: var(--primary-color);
+h2 {
+  font-size: 20px;
 }
 
-section.juices a::after {
-  content: "\203A";
-  margin-left: 5px;
+ul{  
+  list-style-type: square;
+  height: 60px;
+}
+
+li {
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
