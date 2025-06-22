@@ -43,10 +43,9 @@ export class CardItem {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
       if (result  !== undefined && result !== 0) {
         this.quantity = result;
-        console.log(this.quantity)
+        // console.log(this.quantity)
       }
     });
   }

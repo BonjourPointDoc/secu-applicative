@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { LocalService } from '../../local.service';
+import { LocalService } from '../../services/local.service';
+import { MatIconModule } from '@angular/material/icon'; 
 import { Router } from '@angular/router';
 import { Juice } from '../../interfaces';
 import { CardItem } from "../../components/card-item/card-item";
@@ -7,30 +8,27 @@ import { NgFor } from '@angular/common';
 
 @Component({
   selector: 'app-home-page',
-  imports: [CardItem, NgFor],
+  imports: [CardItem, NgFor, MatIconModule],
   template: `
     <section>
     <main>
       <header class="brand-name">
         <div class="headerDiv">
           <img class="brand-logo" src="/assets/logo.png" alt="logo" aria-hidden="true" />
-          <h1>Fruit Juice</h1>
+          <h1>FRUIT JUICE SHOP</h1>
         </div>
-        <button (click)="logout()" class="primary" type="button" style="float: right;">Déconnexion</button>
+        <button matFab extended (click)="logout()" class="primary">
+          <mat-icon>exit_to_app</mat-icon>
+          Log out
+        </button>
       </header>
       <section class="content">
-         <section>
-            <form>
-              <input type="text" placeholder="Search" />
-              <button class="primary" type="button">Search</button>
-            </form>
-          </section>
-          <section class="results">
-            <app-card-item
-              *ngFor="let juice of juices"
-              [juice]="juice"
-            ></app-card-item>
-          </section>
+        <section class="results">
+          <app-card-item
+            *ngFor="let juice of juices"
+            [juice]="juice"
+          ></app-card-item>
+        </section>
       </section>
     </main>
   `,
