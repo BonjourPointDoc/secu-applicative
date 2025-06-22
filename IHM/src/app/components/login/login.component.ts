@@ -1,12 +1,12 @@
 import { Component, output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { LocalService } from '../../local.service';
+import { LocalService } from '../../services/local.service';
 
 @Component({
   selector: 'app-login',
   imports: [ ReactiveFormsModule ],
   template: `
-    <img src="assets/placeholder.jpg" />
+    <img src="assets/logo.png" />
       <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
         <label for="email">Email: </label>
         <input id="email" type="email" formControlName="email" />
@@ -34,9 +34,7 @@ export class LoginComponent {
 
   });
 
-  constructor(private localStorage : LocalService){
-    // console.log(this.localStorage.getUser())
-  }
+  constructor(private localStorage : LocalService){}
 
   onSubmit(){
     this.user = this.profileForm.value

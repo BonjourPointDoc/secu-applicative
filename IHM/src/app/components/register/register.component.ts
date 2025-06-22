@@ -51,21 +51,23 @@ export class RegisterComponent {
 
 
   confirmPwdValidator(control: AbstractControl): ValidationErrors | null {
- 
     const password = control.get("password");
     const confirm = control.get("confirmPwd");
-    if(!password || !confirm){
-      return null
+
+    if (!password || !confirm) {
+        return null;
     }
- 
-    if (password.value != confirm.value) { 
-      return { 'noMatch': true } 
-    }
- 
-    return null
- 
+
+    const hasUpperCase = /[A-Z]+/.test(password.value);
+    const hasLowerCase = /[a-z]+/.test(password.value);
+    const hasNumeric = /[0-9]+/.test(password.value);
+    const hasSpecialChar = /[!@#$&*]+/.test(password.value);
+    const pwdMatch = password.value === confirm.value ? true : false;
+
+    const passwordValid = hasUpperCase && hasLowerCase && hasNumeric && hasSpecialChar && pwdMatch;
+    return !passwordValid ? {passwordStrength:true}: null;
   }
-  
+
   onSubmit(){
     this.user = this.profileForm.value
     // Ajout vérif user avec bdd

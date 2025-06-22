@@ -1,6 +1,6 @@
 import { inject } from "@angular/core";
 import { Router } from "@angular/router";
-import { LocalService } from "./local.service";
+import { LocalService } from "./services/local.service";
 
 export const AuthGuard = () => {
     const localStorage = inject(LocalService);
