@@ -40,18 +40,46 @@ export class ApiService {
       body: JSON.stringify({login: login, password: pwd})
       }).then((response) => {return response.json()
       }).then((data) => { 
-        this.currentAccessToken = data['APIKey'];
+        this.currentAccessToken = data['api_key'];
         if(this.currentAccessToken){
           this.storage.setToken(this.currentAccessToken);
           this.isAuthenticated.next(true);
-          this.router.navigateByUrl('/do-it/home', { replaceUrl: true });
+          this.router.navigateByUrl('/', { replaceUrl: true });
+        }
+      }); 
+  }
+
+  async addUser(user: any){
+    let postData = {
+      nom: user.name,
+      prenom: user.surname,
+      email: user.email,
+      telephone: user.phone,
+      mot_de_passe: user.password
+    }
+    let data = await fetch(`${this.url}/login/user`,{
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(postData)
+      }).then((response) => {return response.json()
+      }).then((data) => { 
+        this.currentAccessToken = data['api_key'];
+        if(this.currentAccessToken){
+          this.storage.setToken(this.currentAccessToken);
+          this.isAuthenticated.next(true);
+          this.router.navigateByUrl('/', { replaceUrl: true });
         }
       }); 
   }
   
+  
   logout(){
+    this.storage.clearData()
     this.storage.removeToken()
     this.isAuthenticated.next(false);
-    this.router.navigateByUrl('/', { replaceUrl: true });
+    this.router.navigateByUrl('/login', { replaceUrl: true });
   }
 }

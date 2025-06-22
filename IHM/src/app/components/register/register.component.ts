@@ -1,16 +1,23 @@
 import { Component, output } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-register',
   imports: [ReactiveFormsModule],
   template: `
       <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
-        <label for="username">Username: </label>
-        <input id="username" type="text" formControlName="username" />
+        <label for="name">Name: </label>
+        <input id="name" type="text" formControlName="name" />
+
+        <label for="surname">Surname: </label>
+        <input id="surname" type="text" formControlName="surname" />
 
         <label for="email">Email: </label>
         <input id="email" type="email" formControlName="email" />
+        
+        <label for="phone">Phone number: </label>
+        <input id="phone" type="text" formControlName="phone" />
 
         <label for="pwd">Mot de passe : </label>
         <input id="pwd" type="password" required minlength="8" formControlName="password" />
@@ -25,17 +32,28 @@ import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validatio
 })
 
 export class RegisterComponent {
-  user: any = {username: '', email: '', password: '', img: ''};
+  user: any = {name: '', surname: '', email: '', phone: '', password: ''};
   confirmPwd: string = '';
   validUser = output<void>();
 
+  constructor(private api: ApiService){}
+
   profileForm = new FormGroup({
-    username: new FormControl(this.user.username, [
+    name: new FormControl(this.user.name, [
       Validators.required,
+      Validators.pattern('^[a-zA-Z0-9_]*$')
+    ]),
+    surname: new FormControl(this.user.surname, [
+      Validators.required,
+      Validators.pattern('^[a-zA-Z0-9_]*$')
     ]),
     email: new FormControl(this.user.email, [
       Validators.required,
       Validators.email,
+    ]),
+    phone: new FormControl(this.user.phone, [
+      Validators.required,
+      Validators.pattern('^[0-9_]*$')
     ]),
     password: new FormControl(this.user.password, [
       Validators.required,
@@ -69,10 +87,14 @@ export class RegisterComponent {
   }
 
   onSubmit(){
-    this.user = this.profileForm.value
-    // Ajout vérif user avec bdd
-    // Ajout user au store si ok
-
-    this.validUser.emit();
+    this.user = {
+      name: this.profileForm.value.name, 
+      surname: this.profileForm.value.surname, 
+      email: this.profileForm.value.email, 
+      phone: this.profileForm.value.phone, 
+      password: this.profileForm.value.password
+    }
+    this.api.addUser(this.user);
+    this.validUser.emit()
   }
 }

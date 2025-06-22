@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { Juice } from '../../interfaces';
 import { CardItem } from "../../components/card-item/card-item";
 import { NgFor } from '@angular/common';
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-home-page',
@@ -37,11 +38,10 @@ import { NgFor } from '@angular/common';
 export class HomePage {
   readonly baseUrl = 'https://angular.dev/assets/images/tutorials/common';
 
-  constructor(private localStorage: LocalService, private router: Router){}
+  constructor(private api: ApiService, private router: Router){}
 
   logout(){
-    this.localStorage.removeData('user')
-    this.router.navigate(['/login']);
+    this.api.logout()
   }
 
   juices: Juice[] = [

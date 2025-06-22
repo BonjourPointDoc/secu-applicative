@@ -38,19 +38,6 @@ export class LoginComponent {
 
   onSubmit(){
     this.user = this.profileForm.value
-    
-  /*
-    fetch(`/getUser?email=${this.user.email}&mdp=${this.user.password}`)
-      .then((response) => response.json())
-      .then((data) => {
-        if(data !== null){
-          this.localStorage.storeUser(data);
-          this.validUser.emit()
-        }
-    });
-  */
-    // Delete once api is implemented
-    // User object stored is supposed to be full user info 
     this.localStorage.storeUser(this.user);
     this.validUser.emit()
   }

@@ -9,7 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-card-item',
-  imports: [NgFor, MatIconModule, MatButtonModule, MatCardModule, CartDialog],
+  imports: [NgFor, MatIconModule, MatButtonModule, MatCardModule],
   template: `
     <section class="juices">
       <img
