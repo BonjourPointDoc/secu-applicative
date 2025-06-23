@@ -20,6 +20,4 @@ L'application ayant plusieurs formulaires (notamment sur la page de connexion), 
 screens 
 
 
-Une fois le formulaire envoyé, je sanitize les données avant de les traiter pour ne pas envoyer des données problématiques à l'api. Angular sanitize déjà automatiquement les url pasées en paramètre (comme les images par exemple).
-
-#### 4 - 
+Une fois le formulaire envoyé, je sanitize les données avant de les traiter pour ne pas envoyer des données problématiques à l'api à l'aide du DomSanitizer proposé par Angular. Angular sanitize déjà automatiquement les url pasées en paramètre (comme les images par exemple).

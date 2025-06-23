@@ -42,7 +42,7 @@ export class RegisterComponent {
   profileForm = new FormGroup({
     name: new FormControl(this.user.name, [
       Validators.required,
-      Validators.pattern('^[a-zA-Z0-9_]*$')
+      Validators.pattern('^[a-zA-Z0-9_-]*$')
     ]),
     surname: new FormControl(this.user.surname, [
       Validators.required,
