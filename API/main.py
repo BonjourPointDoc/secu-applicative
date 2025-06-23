@@ -17,15 +17,15 @@ from lib.models import (Status, StatusOutput ,
 
 
 # Initialise API
-app = FastAPI(title="Juice shop", version="beta")
+app = FastAPI(title="Juice shop", version="beta", docs_url="/api/doc")
 
-@app.get("/", tags=["Temporary dev"])
+@app.get("/api/", tags=["Temporary dev"])
 async def root():
     logger.debug("Logging is working !")
     json_response = {"status": "server-up"}
     return json_response
 
-@app.post("/login", tags=["login"], response_model=LoginOutput,
+@app.post("/api/login", tags=["login"], response_model=LoginOutput,
           responses={401: {"model": LoginOutput, "description": "Wrong credentials"}})
 async def login(json_input: LoginInput):
     if not verify_credentials(json_input.login, json_input.password):
@@ -38,7 +38,7 @@ async def login(json_input: LoginInput):
 
     return output
 
-@app.patch("/login", tags=["login"])
+@app.patch("/api/login", tags=["login"])
 async def change_password_route(password_infos: PasswordChange):
     if not update_password(password_infos):
         return JSONResponse(status_code=400, content= StatusOutput(status= Status.ERROR,
@@ -47,7 +47,7 @@ async def change_password_route(password_infos: PasswordChange):
 
 """
 # Remove in prod because attacker can brute force token
-@app.post("/token/access/test", tags=["login"], response_model=StatusOutput,
+@app.post("/api/token/access/test", tags=["login"], response_model=StatusOutput,
          responses={200: {"model": StatusOutput},
                     401: {"model": StatusOutput}})
 async def test_token(x_api_key: str = Header(...)):
@@ -59,7 +59,7 @@ async def test_token(x_api_key: str = Header(...)):
     return StatusOutput(status=Status.SUCCESS, msg="The API key has good format !")
 """
 
-@app.post("/login/user", tags=["login"], response_model=StatusOutput,
+@app.post("/api/login/user", tags=["login"], response_model=StatusOutput,
           responses={200: {"model": StatusOutput},
                      400: {"model": StatusOutput}})
 async def create_client_route(client_info: ClientCreationInput):
@@ -73,7 +73,7 @@ async def create_client_route(client_info: ClientCreationInput):
     return StatusOutput(status= Status.SUCCESS,
                         msg= "User successfully created")
 
-@app.post("/token/access", tags=["login"], response_model=AccessTokenOutput,
+@app.post("/api/token/access", tags=["login"], response_model=AccessTokenOutput,
           responses= {200: {"model": AccessTokenOutput},
                       401: {"model": StatusOutput}})
 async def get_access_token_route(x_api_key: str = Header(...)):
@@ -86,7 +86,7 @@ async def get_access_token_route(x_api_key: str = Header(...)):
     return AccessTokenOutput(status= Status.SUCCESS,
                              access_token= access_token).model_dump()
 
-@app.post("/transaction", tags=["transaction"])
+@app.post("/api/transaction", tags=["transaction"])
 async def add_transaction_route(transaction_info: TransactionInput,x_api_key: str = Header(...)):
     if not verify_token(x_api_key, False): # Access token
         return JSONResponse(status_code=401 ,content=StatusOutput(status= Status.ERROR,
@@ -100,7 +100,7 @@ async def add_transaction_route(transaction_info: TransactionInput,x_api_key: st
     return TransactionOutput(status= Status.SUCCESS,
                              transaction_id= transaction_id).model_dump()
 
-@app.get("/juice", tags=["juice"], response_model=JuiceList)
+@app.get("/api/juice", tags=["juice"], response_model=JuiceList)
 async def get_all_juice_route(x_api_key: str = Header(...)):
     if not verify_token(x_api_key, False): # Access token
         return JSONResponse(status_code=401 ,content=StatusOutput(status= Status.ERROR,
@@ -110,7 +110,7 @@ async def get_all_juice_route(x_api_key: str = Header(...)):
 
     return all_juice.model_dump()
 
-@app.post("/transaction/add-juice", tags=["transaction"])
+@app.post("/api/transaction/add-juice", tags=["transaction"])
 async def add_juice_to_transaction_route(juice_info: JuiceTransactionItem, x_api_key: str = Header(...)):
     if not verify_token(x_api_key, False): # Access token
         return JSONResponse(status_code=401 ,content=StatusOutput(status= Status.ERROR,
@@ -125,7 +125,7 @@ async def add_juice_to_transaction_route(juice_info: JuiceTransactionItem, x_api
     return StatusOutput(status= Status.SUCCESS, msg= "Successfully added juice to transaction").model_dump()
 
 
-@app.patch("/transaction", tags=["transaction"], response_model=StatusOutput)
+@app.patch("/api/transaction", tags=["transaction"], response_model=StatusOutput)
 async def update_juice_from_transaction_route(juice_info: JuiceTransactionItem, x_api_key: str = Header(...)):
     if not verify_token(x_api_key, False):  # Access token
         return JSONResponse(status_code=401, content=StatusOutput(status=Status.ERROR,
@@ -141,7 +141,7 @@ async def update_juice_from_transaction_route(juice_info: JuiceTransactionItem, 
     return StatusOutput(status= Status.SUCCESS,
                         msg= "Successfully updated juice on the transaction").model_dump()
 
-@app.get("/transaction_info", tags=["transaction"], response_model=TransactionInfo)
+@app.get("/api/transaction_info", tags=["transaction"], response_model=TransactionInfo)
 async def get_transaction_info_route(transaction_id: int, x_api_key: str = Header(...)):
     if not verify_token(x_api_key, False):  # Access token
         return JSONResponse(status_code=401, content=StatusOutput(status=Status.ERROR,
@@ -154,7 +154,7 @@ async def get_transaction_info_route(transaction_id: int, x_api_key: str = Heade
 
     return res.model_dump()
 
-@app.get("/transaction/juice", tags=["transaction"], response_model=TransactionItems)
+@app.get("/api/transaction/juice", tags=["transaction"], response_model=TransactionItems)
 async def get_transaction_route(transaction_id: int, x_api_key: str = Header(...)):
     if not verify_token(x_api_key, False):  # Access token
         return JSONResponse(status_code=401, content=StatusOutput(status=Status.ERROR,
