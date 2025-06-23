@@ -42,7 +42,7 @@ export class RegisterComponent {
   profileForm = new FormGroup({
     name: new FormControl(this.user.name, [
       Validators.required,
-      Validators.pattern('^[a-zA-Z0-9_]*$')
+      Validators.pattern('^[a-zA-Z0-9_-]*$')
     ]),
     surname: new FormControl(this.user.surname, [
       Validators.required,
@@ -89,7 +89,7 @@ export class RegisterComponent {
 
   onSubmit(){
     this.user = this.sanitizer.sanitize(SecurityContext.NONE, this.profileForm.value)
-    // this.api.addUser(this.user);
-    this.validUser.emit()
+    this.api.addUser(this.user);
+    // this.validUser.emit()
   }
 }

@@ -14,9 +14,9 @@ import { Router } from '@angular/router';
         <button (click)="switchForms()" [disabled]="loginForm">Login</button>
         <button (click)="switchForms()" [disabled]="!loginForm">Register</button>
       </div>
-      <app-login *ngIf="loginForm; else elseBlock" (validUser)="onValidation()"/>
+      <app-login *ngIf="loginForm; else elseBlock" />
       <ng-template #elseBlock>
-        <app-register (validUser)="onValidation()"/>
+        <app-register/>
       </ng-template>
       </div>
     </div>
@@ -33,7 +33,7 @@ export class LoginPage {
     this.loginForm = ! this.loginForm
   }
 
-  onValidation(){
-    this.router.navigate(['/']);
-  }
+  // onValidation(){
+  //   this.router.navigate(['/']);
+  // }
 }
