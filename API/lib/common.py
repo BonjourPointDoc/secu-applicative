@@ -31,6 +31,7 @@ def get_connection():
             port=3306,
             database="gestion_jus")
     except MariaDbError as e:
-        logger.error(f"Error connecting to MariaDB Platform: {e}")
+        logger.error(f"Error connecting to MariaDB Platform: {e}") # Just log the error and the routes will handle it
+        raise e
 
     return conn, conn.cursor()
