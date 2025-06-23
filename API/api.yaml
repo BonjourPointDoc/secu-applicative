@@ -1,0 +1,557 @@
+openapi: 3.1.0
+info:
+  title: Juice shop
+  version: beta
+paths:
+  /:
+    get:
+      tags:
+        - Temporary dev
+      summary: Root
+      operationId: root__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /login:
+    post:
+      tags:
+        - login
+      summary: Login
+      operationId: login_login_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginInput'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginOutput'
+        '401':
+          description: Wrong credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginOutput'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+        - login
+      summary: Change Password Route
+      operationId: change_password_route_login_patch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordChange'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /login/user:
+    post:
+      tags:
+        - login
+      summary: Create Client Route
+      operationId: create_client_route_login_user_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientCreationInput'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusOutput'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusOutput'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /token/access:
+    post:
+      tags:
+        - login
+      summary: Get Access Token Route
+      operationId: get_access_token_route_token_access_post
+      parameters:
+        - name: x-api-key
+          in: header
+          required: true
+          schema:
+            type: string
+            title: X-Api-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessTokenOutput'
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusOutput'
+          description: Unauthorized
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /transaction:
+    post:
+      tags:
+        - transaction
+      summary: Add Transaction Route
+      operationId: add_transaction_route_transaction_post
+      parameters:
+        - name: x-api-key
+          in: header
+          required: true
+          schema:
+            type: string
+            title: X-Api-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionInput'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+        - transaction
+      summary: Update Juice From Transaction Route
+      operationId: update_juice_from_transaction_route_transaction_patch
+      parameters:
+        - name: x-api-key
+          in: header
+          required: true
+          schema:
+            type: string
+            title: X-Api-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JuiceTransactionItem'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusOutput'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /juice:
+    get:
+      tags:
+        - juice
+      summary: Get All Juice Route
+      operationId: get_all_juice_route_juice_get
+      parameters:
+        - name: x-api-key
+          in: header
+          required: true
+          schema:
+            type: string
+            title: X-Api-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JuiceList'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /transaction/add-juice:
+    post:
+      tags:
+        - transaction
+      summary: Add Juice To Transaction Route
+      operationId: add_juice_to_transaction_route_transaction_add_juice_post
+      parameters:
+        - name: x-api-key
+          in: header
+          required: true
+          schema:
+            type: string
+            title: X-Api-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JuiceTransactionItem'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /transaction_info:
+    get:
+      tags:
+        - transaction
+      summary: Get Transaction Info Route
+      operationId: get_transaction_info_route_transaction_info_get
+      parameters:
+        - name: transaction_id
+          in: query
+          required: true
+          schema:
+            type: integer
+            title: Transaction Id
+        - name: x-api-key
+          in: header
+          required: true
+          schema:
+            type: string
+            title: X-Api-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionInfo'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /transaction/juice:
+    get:
+      tags:
+        - transaction
+      summary: Get Transaction Route
+      operationId: get_transaction_route_transaction_juice_get
+      parameters:
+        - name: transaction_id
+          in: query
+          required: true
+          schema:
+            type: integer
+            title: Transaction Id
+        - name: x-api-key
+          in: header
+          required: true
+          schema:
+            type: string
+            title: X-Api-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionItems'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    AccessTokenOutput:
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+        access_token:
+          type: string
+          title: Access Token
+      type: object
+      required:
+        - status
+        - access_token
+      title: AccessTokenOutput
+    ClientCreationInput:
+      properties:
+        nom:
+          type: string
+          title: Nom
+        prenom:
+          type: string
+          title: Prenom
+        email:
+          type: string
+          title: Email
+        telephone:
+          type: string
+          title: Telephone
+        mot_de_passe:
+          type: string
+          title: Mot De Passe
+      type: object
+      required:
+        - nom
+        - prenom
+        - email
+        - telephone
+        - mot_de_passe
+      title: ClientCreationInput
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    IngredientDesc:
+      properties:
+        ingredient_id:
+          type: integer
+          title: Ingredient Id
+        quantite:
+          type: integer
+          title: Quantite
+        nom:
+          type: string
+          title: Nom
+      type: object
+      required:
+        - ingredient_id
+        - quantite
+        - nom
+      title: IngredientDesc
+    JuiceItem:
+      properties:
+        jus_id:
+          type: integer
+          title: Jus Id
+        nom:
+          type: string
+          title: Nom
+        prix_unitaire:
+          type: number
+          title: Prix Unitaire
+        ingredients:
+          items:
+            $ref: '#/components/schemas/IngredientDesc'
+          type: array
+          title: Ingredients
+      type: object
+      required:
+        - jus_id
+        - nom
+        - prix_unitaire
+        - ingredients
+      title: JuiceItem
+    JuiceList:
+      properties:
+        juices:
+          items:
+            $ref: '#/components/schemas/JuiceItem'
+          type: array
+          title: Juices
+      type: object
+      required:
+        - juices
+      title: JuiceList
+    JuiceTransactionItem:
+      properties:
+        transaction_id:
+          type: integer
+          title: Transaction Id
+        jus_id:
+          type: integer
+          title: Jus Id
+        quantite:
+          type: integer
+          title: Quantite
+      type: object
+      required:
+        - transaction_id
+        - jus_id
+        - quantite
+      title: JuiceTransactionItem
+    LoginInput:
+      properties:
+        login:
+          type: string
+          title: Login
+        password:
+          type: string
+          title: Password
+      additionalProperties: false
+      type: object
+      required:
+        - login
+        - password
+      title: LoginInput
+    LoginOutput:
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+        api_key:
+          type: string
+          title: Api Key
+      additionalProperties: false
+      type: object
+      required:
+        - status
+        - api_key
+      title: LoginOutput
+    PasswordChange:
+      properties:
+        email:
+          type: string
+          title: Email
+        old_password:
+          type: string
+          title: Old Password
+        new_password:
+          type: string
+          title: New Password
+      type: object
+      required:
+        - email
+        - old_password
+        - new_password
+      title: PasswordChange
+    Status:
+      type: string
+      enum:
+        - success
+        - error
+        - WIP
+        - server-up
+      title: Status
+      description: Contains all possibles status
+    StatusOutput:
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+        msg:
+          type: string
+          title: Msg
+      additionalProperties: false
+      type: object
+      required:
+        - status
+        - msg
+      title: StatusOutput
+    TransactionInfo:
+      properties:
+        date_transaction:
+          type: string
+          title: Date Transaction
+        total:
+          type: number
+          title: Total
+        adresse_livraison:
+          type: string
+          title: Adresse Livraison
+      type: object
+      required:
+        - date_transaction
+        - total
+        - adresse_livraison
+      title: TransactionInfo
+    TransactionInput:
+      properties:
+        address:
+          type: string
+          title: Address
+      type: object
+      required:
+        - address
+      title: TransactionInput
+    TransactionItems:
+      properties:
+        juices:
+          items:
+            $ref: '#/components/schemas/JuiceTransactionItem'
+          type: array
+          title: Juices
+      type: object
+      required:
+        - juices
+      title: TransactionItems
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+              - type: string
+              - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+        - loc
+        - msg
+        - type
+      title: ValidationError
