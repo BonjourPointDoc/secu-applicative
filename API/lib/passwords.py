@@ -49,11 +49,14 @@ def verify_credentials(login: str, password: str) -> bool:
         return False
 
 def get_user_hash(client_id: int) -> str:
-    connection, cursor = get_connection()
+    try:
+        connection, cursor = get_connection()
 
-    cursor.execute("""SELECT mot_de_passe 
-    FROM Client_Password 
-    WHERE client_id = ?""", (client_id,))
+        cursor.execute("""SELECT mot_de_passe 
+        FROM Client_Password 
+        WHERE client_id = ?""", (client_id,))
+    except MariaDbError as e:
+        logger.error(f"Error when getting user hash: {e}")
 
     return ""
 

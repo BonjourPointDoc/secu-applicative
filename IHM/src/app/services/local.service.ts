@@ -1,25 +1,36 @@
 import { Injectable } from '@angular/core';
 
-const ACCESS_TOKEN_KEY = 'access-token';
+const ACCESS_TOKEN_KEY = 'juice-access-token';
+const REFRESH_TOKEN_KEY = 'juice-refresh-token';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LocalService {
 
-  constructor() { }
+  constructor() {}
 
-  public setToken(value: string) {
+  public setAccessToken(value: string) {
     localStorage.setItem(ACCESS_TOKEN_KEY, value);
   }
 
-  public getToken() {
-    return localStorage.getItem(ACCESS_TOKEN_KEY);
+  public getAccessToken() {
+    return localStorage.getItem(ACCESS_TOKEN_KEY)
+  }
+  public rmAccessToken() {
+    localStorage.removeItem(ACCESS_TOKEN_KEY);
   }
 
-  public removeToken() {
-    localStorage.removeItem(ACCESS_TOKEN_KEY);
-  }  
+  public setRefreshToken(value: string) {
+    localStorage.setItem(REFRESH_TOKEN_KEY, value);
+  }
+
+  public getRefreshToken() {
+    return localStorage.getItem(REFRESH_TOKEN_KEY)
+  }
+  public rmRefreshToken() {
+    localStorage.removeItem(REFRESH_TOKEN_KEY);
+  }
 
   public storeUser(user: any){
     localStorage.setItem('user', JSON.stringify(user));
@@ -33,7 +44,7 @@ export class LocalService {
       return null
   }
 
-  public saveData(key: string, value: string) {
+  public setData(key: string, value: string) {
     localStorage.setItem(key, value);
   }
 
