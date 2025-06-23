@@ -22,7 +22,7 @@ def verify_password(password: str, password_hash: str) -> bool:
     return res
 
 def verify_credentials(login: str, password: str) -> bool:
-    if login == "test":
+    if login == "test@gmail.com" and password == "test":
         return True
     try:
         password_hash: str = ""
