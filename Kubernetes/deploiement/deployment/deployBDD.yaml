@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: secapp-bdd
+  namespace: secapp
+spec:
+  replicas: 1 # 👈 Important : un seul pod pour une base de données
+  selector:
+    matchLabels:
+      environnement: prod
+  template:
+    metadata:
+      labels:
+        app: mariadb
+        environnement: prod
+    spec:
+      containers:
+      - name: pod-secapp-bdd
+        image: 10.54.56.39:5000/secapp-bdd:0.0.22 #changer l'image par la bonne
+        imagePullPolicy: Always
+        volumeMounts:
+          - name: mariadb-storage
+            mountPath: /var/lib/mysql # 👈 Chemin de stockage MariaDB
+      volumes:
+        - name: mariadb-storage
+          persistentVolumeClaim:
+            claimName: mariadb-pvc # 👈 Doit correspondre au PVC que tu as créé
+      imagePullSecrets:
+        - name: private-registry-key

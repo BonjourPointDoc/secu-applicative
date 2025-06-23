@@ -1,0 +1,10 @@
+Namespace OK
+Gateway seems OK
+Httproute seems OK
+4 Services (l'API, le front, le serveur, la base de données) seems OK
+4 Deploiement (3 replicats à chaque fois) OK
+1 Volume OK
+1 Volume PVC OK
+Secret OK
+Ajouter https seems OK
+NetworkPolicies seems OK

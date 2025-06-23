@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: base-bdd-headless-svc
+  namespace: secapp
+spec:
+  clusterIP: None # Headless Service obligatoire pour StatefulSet
+  ports:
+  - port: 3306
+    targetPort: 3306
+    protocol: TCP
+  selector:
+    environnement: prod
+    app: mariadb
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: secapp-bdd
+  namespace: secapp
+spec:
+  serviceName: base-bdd-headless-svc # Service Headless obligatoire pour StatefulSet
+  replicas: 3 # Nombre de réplicas souhaité
+  selector:
+    matchLabels:
+      environnement: prod
+      app: mariadb
+  template:
+    metadata:
+      labels:
+        environnement: prod
+        app: mariadb
+    spec:
+      containers:
+      - name: pod-secapp-bdd
+        image: 10.54.56.39:5000/secapp-bdd:0.0.22
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 3306
+            name: mysql
+        volumeMounts:
+          - name: mariadb-storage
+            mountPath: /var/lib/mysql
+      imagePullSecrets:
+        - name: private-registry-key
+  volumeClaimTemplates:
+  - metadata:
+      name: mariadb-storage
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 1Gi # ou la taille que tu veux

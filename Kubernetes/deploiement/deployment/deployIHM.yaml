@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: secapp-ihm
+  namespace: secapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      environnement: prod
+      app: ihm
+  template:
+    metadata:
+      labels:
+        environnement: prod
+        app: ihm
+    spec:
+      containers:
+        - name: pod-secapp-ihm
+          image: 10.54.56.39:5000/secapp-ihm:0.0.11 #change to the good docker image
+          imagePullPolicy: Always
+      imagePullSecrets:
+        - name: private-registry-key

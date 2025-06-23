@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: secapp-server
+  namespace: secapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      environnement: prod
+      app: server
+  template:
+    metadata:
+      labels:
+        environnement: prod
+    spec:
+      containers:
+      - name: pod-secapp-server
+        image: 10.54.56.39:5000/secapp-server:0.0.24 #change to the good docker image
+        imagePullPolicy: Always
+      imagePullSecrets:
+        - name: private-registry-key

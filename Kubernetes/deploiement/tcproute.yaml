@@ -1,0 +1,14 @@
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: TCPRoute
+metadata:
+  name: server-access
+  namespace: secapp
+spec:
+  parentRefs:
+    - name: prod-web
+      namespace: secapp
+  rules:
+    - backendRefs:
+        - name: base-server-svc
+          port: 8444
+
