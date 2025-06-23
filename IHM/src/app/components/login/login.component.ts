@@ -1,6 +1,9 @@
-import { Component, output } from '@angular/core';
+import { Component, output, SecurityContext } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LocalService } from '../../services/local.service';
+import { DomSanitizer } from '@angular/platform-browser';
+import { NONE_TYPE } from '@angular/compiler';
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-login',
@@ -34,11 +37,12 @@ export class LoginComponent {
 
   });
 
-  constructor(private localStorage : LocalService){}
+  constructor(private localStorage : LocalService, private api : ApiService, private sanitizer: DomSanitizer){}
 
   onSubmit(){
-    this.user = this.profileForm.value
-    this.localStorage.storeUser(this.user);
-    this.validUser.emit()
+    this.user = this.sanitizer.sanitize(SecurityContext.NONE, this.profileForm.value)
+    // this.localStorage.storeUser(this.user);
+    this.api.login(this.user.email, this.user.password);
+    // this.validUser.emit()
   }
 }

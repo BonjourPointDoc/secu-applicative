@@ -20,7 +20,6 @@ export class ApiService {
 
   loadToken() {
     const token = this.storage.getToken();
-    console.log(token)
     if (token) {
       this.currentAccessToken = token;
       this.isAuthenticated.next(true);

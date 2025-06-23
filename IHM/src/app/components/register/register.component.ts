@@ -1,6 +1,7 @@
-import { Component, output } from '@angular/core';
+import { Component, output, SecurityContext } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-register',
@@ -36,7 +37,7 @@ export class RegisterComponent {
   confirmPwd: string = '';
   validUser = output<void>();
 
-  constructor(private api: ApiService){}
+  constructor(private api: ApiService, private sanitizer: DomSanitizer){}
 
   profileForm = new FormGroup({
     name: new FormControl(this.user.name, [
@@ -45,7 +46,7 @@ export class RegisterComponent {
     ]),
     surname: new FormControl(this.user.surname, [
       Validators.required,
-      Validators.pattern('^[a-zA-Z0-9_]*$')
+      Validators.pattern('^[a-zA-Z0-9_-]*$')
     ]),
     email: new FormControl(this.user.email, [
       Validators.required,
@@ -87,14 +88,8 @@ export class RegisterComponent {
   }
 
   onSubmit(){
-    this.user = {
-      name: this.profileForm.value.name, 
-      surname: this.profileForm.value.surname, 
-      email: this.profileForm.value.email, 
-      phone: this.profileForm.value.phone, 
-      password: this.profileForm.value.password
-    }
+    this.user = this.sanitizer.sanitize(SecurityContext.NONE, this.profileForm.value)
     this.api.addUser(this.user);
-    this.validUser.emit()
+    // this.validUser.emit()
   }
 }

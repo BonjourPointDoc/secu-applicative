@@ -18,6 +18,9 @@ import { ApiService } from '../../services/api.service';
           <img class="brand-logo" src="/assets/logo.png" alt="logo" aria-hidden="true" />
           <h1>FRUIT JUICE SHOP</h1>
         </div>
+        <!-- <button matFab extended class="primary">
+          Cart
+        </button> -->
         <button matFab extended (click)="logout()" class="primary">
           <mat-icon>exit_to_app</mat-icon>
           Log out
