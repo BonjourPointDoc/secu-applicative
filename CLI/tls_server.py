@@ -9,8 +9,9 @@ from cryptography.hazmat.backends import default_backend
 HOST = '0.0.0.0'
 PORT = 8443
 
-# --- Chargement certificat et clés ---
-with open("cert.pem", "rb") as f:
+# --- Get cert and keys ---
+#with open("cert.pem", "rb") as f:
+with open("/opt/cli/ssl/cert.pem", "rb") as f:
     cert_data = f.read()
 cert = x509.load_pem_x509_certificate(cert_data, default_backend())
 public_key = cert.public_key()
@@ -18,21 +19,22 @@ pem_public_key = public_key.public_bytes(
     encoding=serialization.Encoding.PEM,
     format=serialization.PublicFormat.SubjectPublicKeyInfo
 )
-with open("key.pem", "rb") as f:
+# with open("key.pem", "rb") as f:
+with open("/opt/cli/ssl/key.pem", "rb") as f:
     private_key = serialization.load_pem_private_key(
         f.read(),
         password=None,
         backend=default_backend()
     )
 
-# --- Contexte TLS ---
+# --- TLS ctx ---
 context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-context.load_cert_chain(certfile='cert.pem', keyfile='key.pem')
+context.load_cert_chain(certfile='/opt/cli/ssl/cert.pem', keyfile='/opt/cli/ssl/key.pem')
 
 def handle_client(conn, addr):
     print(f"New client: {addr}")
     try:
-        # Envoyer clé publique
+        # Send pub key
         conn.sendall(pem_public_key)
         print(f"Public key sent to {addr}")
 
