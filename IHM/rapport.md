@@ -12,7 +12,7 @@ Cela permet aussi à un utilisateur déjà connecté d'accéder au site directem
 
 #### 2 - Token JWT
 L'API a implémenté l'authentification avec JWT, j'ai donc pris en charge l'access token et le refresh token. J'ai créé un service pour les appels à l'api, qui garde l'access token.
-// A compléter
+Je stocke l'access token dans le local storage d'Angular.
 
 #### 3 - Gestion des inputs
 L'application ayant plusieurs formulaires (notamment sur la page de connexion), j'ai essayé de nettoyer au mieux les données entrées par l'utilisateur. our ça, j'ai mis un place des Validators sur les données du formulaire de connexion/d'inscription. Ils permettent de valider l'entrée utilisateur et empèchent de pouvoir envoyer le formulaire si les données ne sont pas conformes aux spécifications souhaitées :

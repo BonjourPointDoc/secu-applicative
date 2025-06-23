@@ -33,7 +33,4 @@ export class LoginPage {
     this.loginForm = ! this.loginForm
   }
 
-  // onValidation(){
-  //   this.router.navigate(['/']);
-  // }
 }

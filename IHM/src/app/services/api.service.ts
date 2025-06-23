@@ -12,7 +12,8 @@ export class ApiService {
   isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   currentAccessToken:string | null = null;
   currentRefreshToken:string | null = null;
-  private url:string = "https://juicy-world.org/api";
+  // private url:string = ;
+  private url:string = "/api"
 
   constructor(private storage: LocalService, private router: Router) {
     this.loadToken();
@@ -29,8 +30,9 @@ export class ApiService {
   }
 
   async login(login:string, pwd:string){
+    // console.log(await fetch(this.url))
     let postData = {"login": login, "password": pwd }
-    let data = await fetch(`${this.url}/login`,{
+    let data = await fetch(`${this.url}/api/login`,{
       method: 'POST',
       headers: {
         'Accept': 'application/json',

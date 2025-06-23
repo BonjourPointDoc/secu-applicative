@@ -60,7 +60,8 @@
               "buildTarget": "IHM:build:production"
             },
             "development": {
-              "buildTarget": "IHM:build:development"
+              "buildTarget": "IHM:build:development",
+              "proxyConfig": "src/proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"
