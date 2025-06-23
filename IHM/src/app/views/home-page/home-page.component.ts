@@ -28,6 +28,7 @@ import { ApiService } from '../../services/api.service';
           <app-card-item
             *ngFor="let juice of juices"
             [juice]="juice"
+            (itemAdded)="addToCart($event)"
           ></app-card-item>
         </section>
       </section>
@@ -37,11 +38,20 @@ import { ApiService } from '../../services/api.service';
 })
 export class HomePage {
   readonly baseUrl = 'https://angular.dev/assets/images/tutorials/common';
-
+  cart: Map<number, number> = new Map<number, number>();
   constructor(private api: ApiService, private router: Router){}
 
   logout(){
     this.api.logout()
+  }
+
+  addToCart(data:any){
+    let quantity = data.amount
+    if(this.cart.has(data.item)){
+      quantity += this.cart.get(data.item)
+    }
+    this.cart.set(data.item, quantity)
+    console.log(this.cart)
   }
 
   juices: Juice[] = [
@@ -146,4 +156,6 @@ export class HomePage {
         { id: 9, name: "framboise", quantity: 16}      ]
     },
   ];
+
+
 }

@@ -1,4 +1,4 @@
-import {Component, inject, input} from '@angular/core';
+import {Component, EventEmitter, inject, input, Output, output} from '@angular/core';
 import { MatIconModule } from '@angular/material/icon'; 
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -33,6 +33,7 @@ import { MatDialog } from '@angular/material/dialog';
   styleUrls: ['./card-item.css'],
 })
 export class CardItem {
+  @Output() itemAdded = new EventEmitter<any>();
   readonly dialog = inject(MatDialog);
   juice = input.required<Juice>();  
   quantity: number = 0;
@@ -45,7 +46,7 @@ export class CardItem {
     dialogRef.afterClosed().subscribe(result => {
       if (result  !== undefined && result !== 0) {
         this.quantity = result;
-        // console.log(this.quantity)
+        this.itemAdded.emit({item:this.juice().id, amount: this.quantity})
       }
     });
   }
