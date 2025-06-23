@@ -14,7 +14,7 @@ import { Router } from '@angular/router';
         <button (click)="switchForms()" [disabled]="loginForm">Login</button>
         <button (click)="switchForms()" [disabled]="!loginForm">Register</button>
       </div>
-      <app-login *ngIf="loginForm; else elseBlock"/>
+      <app-login *ngIf="loginForm; else elseBlock" />
       <ng-template #elseBlock>
         <app-register/>
       </ng-template>

@@ -12,7 +12,7 @@ export class ApiService {
   isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   currentAccessToken:string | null = null;
   currentRefreshToken:string | null = null;
-  private url:string = "http://base-api-svc:32401/";
+  private url:string = "https://juicy-world.org/api";
 
   constructor(private storage: LocalService, private router: Router) {
     this.loadToken();

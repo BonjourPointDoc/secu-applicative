@@ -1,0 +1,33 @@
+h2 {
+    margin: 5px;
+    margin-bottom: 20px;;
+    text-align: center;
+}
+
+ul{
+    list-style: none;
+}
+
+mat-divider{
+    margin: 5px;
+}
+
+li{
+    margin: 10px;
+}
+
+.item-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.item-infos{
+    display: flex;
+    align-items: center;
+}
+
+.quantity{
+    margin-right: 10px;
+}
