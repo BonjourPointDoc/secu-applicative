@@ -41,8 +41,8 @@ export class LoginComponent {
 
   onSubmit(){
     this.user = this.sanitizer.sanitize(SecurityContext.NONE, this.profileForm.value)
-    // this.localStorage.storeUser(this.user);
-    this.api.login(this.user.email, this.user.password);
-    // this.validUser.emit()
+    this.localStorage.storeUser(this.user);
+    // this.api.login(this.user.email, this.user.password);
+    this.validUser.emit()
   }
 }

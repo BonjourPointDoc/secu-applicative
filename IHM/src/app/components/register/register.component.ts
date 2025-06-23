@@ -89,7 +89,7 @@ export class RegisterComponent {
 
   onSubmit(){
     this.user = this.sanitizer.sanitize(SecurityContext.NONE, this.profileForm.value)
-    this.api.addUser(this.user);
-    // this.validUser.emit()
+    // this.api.addUser(this.user);
+    this.validUser.emit()
   }
 }
